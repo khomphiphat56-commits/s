@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1 Year Anniversary 💙</title>
+
+<style>
+/* ================= หน้า 1 เปิดสิ ================= */
+.screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+#screen-open{
+  background:linear-gradient(135deg,#c7d2fe,#a78bfa);
+}
+#screen-heart{
+  background:linear-gradient(135deg,#f5d0fe,#c4b5fd);
+  display:none;
+}
+#screen-lock{
+  background:linear-gradient(135deg,#e9d5ff,#c4b5fd);
+  display:none;
+}
+#screen-firework{
+  background:#000;
+  display:none;
+}
+
+/* การ์ดกลาง */
+.box{
+  background:rgba(255,255,255,.25);
+  backdrop-filter:blur(30px);
+  padding:60px 50px;
+  border-radius:50px;
+  text-align:center;
+  color:#fff;
+  box-shadow:0 40px 120px rgba(0,0,0,.3);
+}
+.box button{
+  margin-top:30px;
+  padding:20px 70px;
+  border:none;
+  border-radius:50px;
+  font-size:20px;
+  background:#fff;
+  color:#7c3aed;
+}
+
+/* ================= หลอดหัวใจ ================= */
+.heart-bar{
+  width:260px;
+  height:26px;
+  background:rgba(255,255,255,.4);
+  border-radius:30px;
+  overflow:hidden;
+  margin:20px auto;
+}
+.heart-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#ec4899,#8b5cf6);
+  transition:.3s;
+}
+
+/* ================= ใส่รหัส ================= */
+.dots{display:flex;gap:10px;justify-content:center;margin:16px 0;}
+.dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.4);}
+.dot.on{background:#fff;}
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.keypad button{
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  font-size:18px;
+}
+
+/* ================= พลุ ================= */
+.firework{
+  position:absolute;
+  bottom:0;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  animation:boom 1.5s forwards;
+}
+@keyframes boom{
+  to{
+    transform:translateY(-80vh) scale(12);
+    opacity:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- หน้า 1 เปิดสิ -->
+<div id="screen-open" class="screen">
+  <div class="box">
+    <h1>เปิดสิ 💙</h1>
+    <button onclick="goHeart()">✨ เปิดสิ</button>
+  </div>
+</div>
+
+<!-- หน้า 2 หลอดหัวใจ -->
+<div id="screen-heart" class="screen">
+  <div class="box" onclick="addHeart()">
+    <h2>เติมหัวใจ 💜</h2>
+    <div class="heart-bar">
+      <div class="heart-fill" id="heartFill"></div>
+    </div>
+    <p>แตะหน้าจอเพื่อเพิ่มหัวใจ</p>
+  </div>
+</div>
+
+<!-- หน้า 3 ใส่รหัส -->
+<div id="screen-lock" class="screen">
+  <div class="box">
+    <h2>ใส่รหัสลับ</h2>
+    <div class="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="keypad">
+      <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+      <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+      <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+      <button onclick="resetPin()">⌫</button><button onclick="press(0)">0</button><button onclick="resetPin()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- หน้า 4 พลุ -->
+<div id="screen-firework" class="screen"></div>
+
+<script>
+/* ---------- หน้าเปิดสิ → หลอดหัวใจ ---------- */
+function goHeart(){
+  screen_open.style.display="none";
+  screen_heart.style.display="flex";
+}
+
+/* ---------- หลอดหัวใจ ---------- */
+let heart=0;
+function addHeart(){
+  heart+=10;
+  heartFill.style.width=heart+"%";
+  if(heart>=100){
+    screen_heart.style.display="none";
+    screen_lock.style.display="flex";
+  }
+}
+
+/* ---------- ใส่รหัส ---------- */
+const PASS="080225";
+let input="";
+function press(n){
+  if(input.length>=PASS.length)return;
+  input+=n;
+  document.querySelectorAll(".dot")[input.length-1].classList.add("on");
+  if(input.length===PASS.length){
+    if(input===PASS){
+      screen_lock.style.display="none";
+      startFirework();
+    }else resetPin();
+  }
+}
+function resetPin(){
+  input="";
+  document.querySelectorAll(".dot").forEach(d=>d.classList.remove("on"));
+}
+
+/* ---------- พลุ ---------- */
+function startFirework(){
+  screen_firework.style.display="block";
+  let t=setInterval(()=>{
+    const f=document.createElement("div");
+    f.className="firework";
+    f.style.left=Math.random()*100+"vw";
+    f.style.background=`hsl(${Math.random()*360},100%,60%)`;
+    screen_firework.appendChild(f);
+    setTimeout(()=>f.remove(),1500);
+  },200);
+  setTimeout(()=>{
+    clearInterval(t);
+    screen_firework.style.display="none";
+  },5000);
+}
+</script>
+
+<!-- ⬇️ ตรงนี้คือโค้ดเดิมของคุณทั้งหมด (ไม่แก้) -->
+<!-- วางโค้ดเดิมของคุณต่อจากตรงนี้ได้เลย -->
+</body>
+</html>
